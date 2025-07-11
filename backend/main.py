@@ -7,14 +7,18 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 import base64
 from typing import Optional
-from diffusers import StableDiffusionInpaintPipeline
+from diffusers import AutoPipelineForInpainting
 
-app = FastAPI(title="Stable Diffusion Inpainting API", version="1.0.0")
+app = FastAPI(title="SDXL Inpainting API", version="2.0.0")
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js default port
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://0.0.0.0:3000"
+    ],  # Allow all common frontend origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,26 +29,27 @@ pipe = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the Stable Diffusion pipeline on startup"""
+    """Initialize the SDXL Inpainting pipeline on startup"""
     global pipe
     try:
-        print("Loading Stable Diffusion 2 Inpainting model...")
-        pipe = StableDiffusionInpaintPipeline.from_pretrained(
-            "stabilityai/stable-diffusion-2-inpainting",
+        print("Loading SDXL Inpainting model (1024x1024)...")
+        pipe = AutoPipelineForInpainting.from_pretrained(
+            "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
             torch_dtype=torch.float16,
+            variant="fp16"
         )
         
         # Move to CUDA if available
         if torch.cuda.is_available():
             pipe.to("cuda")
-            print("Model loaded on CUDA")
+            print("SDXL model loaded on CUDA")
         else:
             print("CUDA not available, using CPU")
             
-        print("Model loaded successfully!")
+        print("SDXL model loaded successfully!")
         
     except Exception as e:
-        print(f"Error loading model: {e}")
+        print(f"Error loading SDXL model: {e}")
         # Continue startup even if model fails to load for development
 
 def image_to_base64(image: Image.Image) -> str:
@@ -63,7 +68,7 @@ def base64_to_image(base64_string: str) -> Image.Image:
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    return {"message": "Stable Diffusion Inpainting API is running"}
+    return {"message": "SDXL Inpainting API is running"}
 
 @app.get("/health")
 async def health_check():
@@ -80,9 +85,10 @@ async def inpaint_image(
     prompt: str = Form(...),
     image: UploadFile = File(...),
     mask: UploadFile = File(...),
-    num_inference_steps: int = Form(50),
-    guidance_scale: float = Form(7.5),
-    strength: float = Form(1.0)
+    negative_prompt: str = Form("blurry, low quality, distorted, artifacts, bad anatomy"),
+    num_inference_steps: int = Form(20),
+    guidance_scale: float = Form(8.0),
+    strength: float = Form(0.99)
 ):
     """
     Perform inpainting on the provided image using the mask and prompt
@@ -106,15 +112,17 @@ async def inpaint_image(
         input_image = Image.open(io.BytesIO(image_data)).convert("RGB")
         mask_image = Image.open(io.BytesIO(mask_data)).convert("RGB")
         
-        # Resize images to be compatible (512x512 is optimal for SD2)
-        target_size = (512, 512)
+        # Resize images to be compatible (1024x1024 is optimal for SDXL)
+        target_size = (1024, 1024)
         input_image = input_image.resize(target_size)
         mask_image = mask_image.resize(target_size)
         
         # Perform inpainting
         print(f"Starting inpainting with prompt: {prompt}")
+        print(f"Negative prompt: {negative_prompt}")
         result = pipe(
             prompt=prompt,
+            negative_prompt=negative_prompt,
             image=input_image,
             mask_image=mask_image,
             num_inference_steps=num_inference_steps,
