@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 import base64
 from typing import Optional
-from diffusers import AutoPipelineForInpainting
+from diffusers import AutoPipelineForInpainting, StableDiffusionPipeline
 
 app = FastAPI(title="AI Image Editor API", version="2.0.0")
 
@@ -24,8 +24,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global pipeline variable
+# Global pipeline variables
 pipe = None
+pipe_v1_5 = None
 
 # Default prompts for better results
 DEFAULT_INPAINT_PROMPT = "high quality, detailed, photorealistic, natural lighting, sharp focus, professional photography"
@@ -36,8 +37,8 @@ DEFAULT_ERASE_NEGATIVE = "objects, items, people, text, watermark, logo, signatu
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the SDXL Inpainting pipeline on startup"""
-    global pipe
+    """Initialize the SDXL Inpainting pipeline and Stable Diffusion v1.5 on startup"""
+    global pipe, pipe_v1_5
     try:
         print("Loading SDXL Inpainting model (1024x1024)...")
         pipe = AutoPipelineForInpainting.from_pretrained(
@@ -55,8 +56,25 @@ async def startup_event():
             
         print("SDXL model loaded successfully!")
         
+        # Load Stable Diffusion v1.5 model
+        print("Loading Stable Diffusion v1.5 model (512x512)...")
+        pipe_v1_5 = StableDiffusionPipeline.from_pretrained(
+            "CompVis/stable-diffusion-v1-5",
+            torch_dtype=torch.float16,
+            variant="fp16"
+        )
+        
+        # Move to CUDA if available
+        if torch.cuda.is_available():
+            pipe_v1_5.to("cuda")
+            print("Stable Diffusion v1.5 model loaded on CUDA")
+        else:
+            print("CUDA not available, using CPU")
+            
+        print("Stable Diffusion v1.5 model loaded successfully!")
+        
     except Exception as e:
-        print(f"Error loading SDXL model: {e}")
+        print(f"Error loading models: {e}")
         # Continue startup even if model fails to load for development
 
 def image_to_base64(image: Image.Image) -> str:
@@ -233,6 +251,34 @@ async def erase_object(
         print(f"Error during object erasure: {e}")
         raise HTTPException(status_code=500, detail=f"Object erasure failed: {str(e)}")
 
+@app.post("/generate")
+async def generate_image(
+    prompt: str = Form(...)
+):
+    """Generate an image using Stable Diffusion v1.5"""
+    global pipe_v1_5
+    
+    if pipe_v1_5 is None:
+        raise HTTPException(status_code=500, detail="Stable Diffusion v1.5 model not loaded")
+    
+    try:
+        # Generate image
+        print(f"Generating image with prompt: {prompt}")
+        result = pipe_v1_5(prompt).images[0]
+        
+        # Convert result to base64
+        result_base64 = image_to_base64(result)
+        
+        return JSONResponse(content={
+            "success": True,
+            "result_image": result_base64,
+            "prompt": prompt
+        })
+        
+    except Exception as e:
+        print(f"Error during image generation: {e}")
+        raise HTTPException(status_code=500, detail=f"Image generation failed: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
