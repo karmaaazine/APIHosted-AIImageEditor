@@ -6,8 +6,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Stable Diffusion Inpainting',
-  description: 'AI-powered image inpainting using Stable Diffusion 2',
+  title: 'AI Image Editor - Inpainting & Object Removal',
+  description: 'Professional AI-powered image editing tools featuring inpainting and object removal using Stable Diffusion XL',
 }
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200">
+        <div className="min-h-screen">
           {children}
         </div>
       </body>

@@ -2,7 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-50: #fef7ed;
+  --primary-100: #fdedd3;
+  --primary-200: #fad7a5;
+  --primary-300: #f6bb6d;
+  --primary-400: #f19332;
+  --primary-500: #ed7611;
+  --primary-600: #de5e07;
+  --primary-700: #b94708;
+  --primary-800: #94380e;
+  --primary-900: #78300f;
+  --primary-950: #41170b;
+}
+
 body {
-  background: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+  background: linear-gradient(135deg, #ed7611 0%, #b94708 50%, #78300f 100%);
   min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Card hover effects */
+.tool-card {
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 1);
 } 
