@@ -38,7 +38,7 @@ export default function HomePage() {
       title: 'Text to Image',
       description: 'Generate stunning images from text descriptions',
       icon: Wand2,
-      status: 'coming_soon',
+      status: 'available',
       gradient: 'from-orange-500 to-red-500',
       image: '👨‍🚀'
     },

@@ -1,280 +1,457 @@
-# SDXL Inpainting Studio
+# 🎨 AI Image Editor - Professional AI-Powered Image Tools
 
-A modern web application for AI-powered image inpainting using **Stable Diffusion XL (SDXL)**. Features an interactive canvas-based mask creation tool and high-quality 1024x1024 image generation. The backend runs on your server with GPU support, while the frontend provides an intuitive web interface.
+A comprehensive AI image editing platform featuring **three powerful tools** powered by **RealVisXL_V5.0**. Create, modify, and enhance images with state-of-the-art AI technology, optimized for professional results and efficient GPU memory usage.
 
 ## ✨ Features
 
-- **🎨 Interactive Mask Creation**: Paint directly on images with brush tools - no external mask files needed
-- **🖼️ High Resolution**: 1024x1024 output with SDXL quality
-- **🎯 Advanced Prompting**: Positive and negative prompts for precise control
-- **🖌️ Professional Canvas Tools**: Brush, eraser, clear, and mask preview
-- **📱 Modern UI**: Clean, responsive interface built with Next.js and Tailwind CSS
-- **⚡ Optimized Performance**: Fast generation with SDXL-tuned parameters
-- **📥 Drag & Drop**: Easy image upload with visual feedback
-- **🔄 Real-time Processing**: Live status updates during generation
-- **💾 Easy Download**: One-click result saving
+### 🔥 **Three AI-Powered Tools**
+- **🎨 AI Inpainting**: Replace or modify objects in images with AI-generated content
+- **🗑️ Object Removal**: Seamlessly erase unwanted objects from photos  
+- **✨ Text-to-Image**: Generate stunning images from text descriptions
+
+### 🚀 **Advanced Capabilities**
+- **🖼️ High Resolution**: Native 1024x1024 output with photorealistic quality
+- **🎯 Smart Prompting**: Enhanced positive/negative prompts with presets
+- **🧠 Memory Efficient**: On-demand model loading prevents CUDA OOM errors
+- **📊 Real-time Monitoring**: Live GPU memory usage tracking
+- **🖌️ Interactive Tools**: Canvas-based editing with brush controls
+- **📱 Modern UI**: Responsive design with warm color scheme
+- **⚡ Optimized Performance**: RealVisXL with attention slicing
 
 ## 🏗️ Architecture
 
-- **Backend**: FastAPI (Python) with SDXL Inpainting pipeline
-- **Frontend**: Next.js (React/TypeScript) with HTML5 Canvas
-- **Model**: Stable Diffusion XL Inpainting (`diffusers/stable-diffusion-xl-1.0-inpainting-0.1`)
-- **Resolution**: Native 1024x1024 generation
+- **Backend**: FastAPI (Python) with memory-efficient model management
+- **Frontend**: Next.js (React/TypeScript) with multi-page routing
+- **Model**: RealVisXL_V5.0 (photorealistic SDXL variant)
+- **Resolution**: 1024x1024 with multiple aspect ratios
+- **Memory**: Smart on-demand loading for GPU optimization
 
-## 📋 Prerequisites
+## 📋 System Requirements
 
-### Backend (Server)
-- Python 3.8+ 
-- CUDA-compatible GPU (8GB+ VRAM recommended)
-- ~15GB free disk space (for SDXL model download)
+### **Backend Requirements**
+- **Python**: 3.8+
+- **GPU**: CUDA-compatible with 8GB+ VRAM (RTX 3070/4060+ recommended)
+- **Storage**: ~15GB free space (for model download)
+- **RAM**: 16GB+ system memory
 
-### Frontend (Local Machine)
-- Node.js 18+
-- npm or yarn
-- Modern web browser with Canvas support
+### **Frontend Requirements**
+- **Node.js**: 18+
+- **Browser**: Modern browser with Canvas API support
+- **Network**: Access to backend API (localhost or remote)
 
-## 🚀 Setup Instructions
+### **Supported Platforms**
+- ✅ **RunPod**: Optimized for cloud GPU instances
+- ✅ **Local GPU**: NVIDIA RTX series
+- ✅ **Google Colab**: Pro/Pro+ with GPU runtime
+- ⚠️ **CPU Mode**: Functional but very slow (60+ seconds per image)
 
-### 1. Backend Setup
+## 🚀 Quick Start
+
+### **1. Backend Setup**
 
 ```bash
-# Navigate to the backend directory
-cd backend
+# Clone and navigate to backend
+cd APIHosted-AIImageEditor/backend
 
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# Make the run script executable
+# Start the server (with enhanced output)
 chmod +x run.sh
-
-# Start the backend server
 ./run.sh
 ```
 
-The backend will:
-- Download the SDXL Inpainting model (~6GB) on first run
-- Load the model to GPU (if available)
-- Start FastAPI server on `0.0.0.0:8000`
+**Expected startup output:**
+```bash
+🚀 Starting AI Image Editor API...
+📝 Powered by RealVisXL_V5.0 - Professional AI Image Editing
 
-**⚠️ Note**: First startup takes 5-10 minutes for SDXL model download.
+🐍 Python version: 3.10
+🎮 GPU Status:
+   📱 NVIDIA GeForce RTX 4090, 24576, 1024
 
-### 2. Frontend Setup
+🔥 Features Available:
+   🎨 AI Inpainting - Replace/modify objects in images
+   🗑️  Object Removal - Seamlessly erase unwanted objects  
+   ✨ Text-to-Image - Generate images from text prompts
+
+💡 Memory Optimization:
+   • Models load on-demand to optimize GPU memory
+   • Smart unloading prevents CUDA OOM errors
+   • Real-time memory monitoring included
+
+🌐 API will be available at: http://localhost:8000
+```
+
+### **2. Frontend Setup**
 
 ```bash
-# Navigate to the frontend directory
-cd frontend
+# Navigate to frontend
+cd APIHosted-AIImageEditor/frontend
 
-# Install dependencies
+# Install dependencies and start
 npm install
-
-# Start the development server
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3000`
+Frontend available at: `http://localhost:3000`
 
-## 🎨 Usage Guide
+## 🎨 Tool-by-Tool Guide
 
-### Step-by-Step Workflow
+### **🎨 AI Inpainting (`/inpaint`)**
 
-1. **📤 Upload Image**: Drag & drop or click to select your image
-2. **🖌️ Paint Mask**: Use the interactive canvas tools to paint areas for inpainting
-   - **Brush Tool**: Paint red areas that will be modified
-   - **Eraser Tool**: Remove painted areas
-   - **Clear Tool**: Reset the entire mask
-   - **Brush Size**: Adjust from 5-50 pixels
-3. **👁️ Preview Mask**: Click "Preview Mask" to see the generated mask (white = inpaint, black = preserve)
-4. **✍️ Enter Prompts**: 
-   - **Positive Prompt**: Describe what you want to generate
-   - **Negative Prompt**: Specify what to avoid
-5. **⚙️ Adjust Parameters** (optional):
-   - **Inference Steps**: 10-50 (SDXL works great with fewer steps)
-   - **Guidance Scale**: 5-15 (how closely to follow prompts)
-   - **Strength**: 0.1-1.0 (how much to change masked areas)
-6. **🚀 Generate**: Click "Generate Inpainting" and wait for processing
-7. **💾 Download**: Save your result with the download button
+**Perfect for**: Replacing objects, changing backgrounds, modifying scenes
 
-### 💡 Pro Tips for Better Results
+1. **Upload Image**: Drag & drop your photo
+2. **Paint Mask**: Use brush tools to mark areas for modification
+3. **Enter Prompt**: Describe what you want to generate
+4. **Generate**: AI replaces masked areas with your prompt
+5. **Download**: Save your enhanced image
 
-**Effective Prompts:**
-- ✅ `"photorealistic black sunglasses with dark reflective lenses"`
-- ✅ `"stylish aviator glasses with gold metal frames"`
-- ✅ `"designer reading glasses with thin black frames"`
-- ❌ Avoid vague prompts like `"glasses"` or `"something cool"`
+**Example Prompts**:
+- `"modern glass building with blue reflective windows"`
+- `"vintage leather jacket with silver zippers"`
+- `"blooming cherry tree with pink flowers"`
 
-**Mask Creation:**
-- Paint precise, clean areas for best results
-- Use the mask preview to verify your selection
-- Avoid soft or blurry mask edges
+### **🗑️ Object Removal (`/erase`)**
 
-**Parameter Tuning:**
-- Start with default settings (Steps: 20, Guidance: 8.0, Strength: 0.99)
-- Increase guidance scale for stronger prompt following
-- Lower strength for subtle modifications
+**Perfect for**: Removing people, objects, watermarks, unwanted elements
+
+1. **Upload Image**: Choose photo with unwanted objects
+2. **Paint Mask**: Mark exactly what to remove
+3. **Background Hint** (optional): Describe desired background
+4. **Erase**: AI seamlessly fills the area
+5. **Download**: Clean image without objects
+
+**Background Prompts**:
+- `"grass field"` (for removing people from parks)
+- `"ocean waves"` (for beach cleanup)
+- `"empty road"` (for vehicle removal)
+
+### **✨ Text-to-Image (`/generate`)**
+
+**Perfect for**: Creating original images, concept art, illustrations
+
+1. **Enter Prompt**: Describe your desired image
+2. **Choose Aspect Ratio**: Square, Portrait, Landscape, Wide
+3. **Adjust Settings**: Steps, guidance, advanced options
+4. **Generate**: AI creates your image from scratch
+5. **Download**: Save your generated artwork
+
+**Effective Prompts**:
+- `"A majestic mountain landscape at sunset with dramatic clouds"`
+- `"Portrait of a wise old wizard with flowing robes and magical staff"`
+- `"Futuristic cyberpunk city with neon lights and flying cars"`
+
+## 🔧 Memory Management
+
+### **Smart Loading System**
+
+The backend uses intelligent model management to prevent CUDA out-of-memory errors:
+
+```python
+# Models load only when needed
+🎨 Inpainting request → Loads inpainting model (unloads others)
+🗑️ Erase request → Uses same inpainting model  
+✨ Generate request → Loads text-to-image model (unloads others)
+```
+
+### **Memory Monitoring**
+
+Real-time GPU tracking in console and API responses:
+
+```bash
+🔥 [2024-01-15 14:30:25] 🚀 REQUEST START - /generate
+   💾 GPU Memory: 3.2GB / 24.0GB (13.3%)
+   📊 Allocated: 2.8GB | Free: 20.8GB
+
+🔥 [2024-01-15 14:30:35] ✅ REQUEST COMPLETE (10.2s) - /generate
+   💾 GPU Memory: 3.1GB / 24.0GB (12.9%)
+   📊 Allocated: 2.7GB | Free: 20.9GB
+```
+
+### **Memory Optimization Features**
+
+- **On-demand loading**: Models load only when requested
+- **Smart unloading**: Previous model cleared before loading new one
+- **Attention slicing**: Reduces memory usage during inference
+- **VAE slicing**: Further memory optimization for large images
+- **Aggressive cleanup**: GPU cache cleared after each request
 
 ## 🔌 API Endpoints
 
-### Backend API (FastAPI)
+### **Core Endpoints**
 
-- `GET /` - Health check
-- `GET /health` - Model status and system info  
-- `POST /inpaint` - Main inpainting endpoint with SDXL
+| Endpoint | Method | Purpose | Model Used |
+|----------|--------|---------|------------|
+| `/inpaint` | POST | AI inpainting | RealVisXL Inpainting |
+| `/erase` | POST | Object removal | RealVisXL Inpainting |
+| `/generate` | POST | Text-to-image | RealVisXL Text-to-Image |
+| `/health` | GET | System status | None |
+| `/gpu-status` | GET | Memory monitoring | None |
 
-#### Enhanced Inpaint Request
+### **Example API Calls**
+
+**Inpainting**:
 ```bash
-curl -X POST "http://your-server:8000/inpaint" \
-  -F "image=@original.jpg" \
+curl -X POST "http://localhost:8000/inpaint" \
+  -F "image=@photo.jpg" \
   -F "mask=@mask.png" \
-  -F "prompt=black sunglasses with reflective lenses" \
-  -F "negative_prompt=blurry, low quality, distorted" \
-  -F "num_inference_steps=20" \
-  -F "guidance_scale=8.0" \
-  -F "strength=0.99"
+  -F "prompt=beautiful sunset sky with clouds" \
+  -F "negative_prompt=blurry, low quality" \
+  -F "num_inference_steps=25" \
+  -F "guidance_scale=7.5"
+```
+
+**Text-to-Image**:
+```bash
+curl -X POST "http://localhost:8000/generate" \
+  -F "prompt=mountain landscape at sunset" \
+  -F "negative_prompt=blurry, low quality" \
+  -F "width=1024" \
+  -F "height=1024" \
+  -F "num_inference_steps=25"
 ```
 
 ## ⚙️ Configuration
 
-### Backend Configuration
+### **Backend Configuration**
 
-Edit `backend/main.py` to customize:
-- CORS origins for different frontend URLs
-- Default parameters (steps, guidance, strength)
-- Model loading settings
-- Image processing pipeline
+**Model Settings** (`main.py`):
+```python
+MODEL_NAME = "SG161222/RealVisXL_V5.0"  # Change model here
+MODEL_CONFIG = {
+    "torch_dtype": torch.float16,  # Use fp16 for memory efficiency  
+    "variant": "fp16"
+}
+```
 
-### Frontend Configuration
+**Memory Optimization**:
+```python
+# Enable in load_*_model() functions
+pipe.enable_attention_slicing()  # Reduces memory usage
+pipe.enable_vae_slicing()       # Further optimization
+```
 
-Update API endpoint in `frontend/src/app/page.tsx` if backend runs on different server:
+**CORS Settings** (for different frontend URLs):
+```python
+allow_origins=[
+    "http://localhost:3000",      # Local development
+    "http://your-domain.com",     # Production domain
+    "https://your-app.vercel.app" # Deployed frontend
+]
+```
+
+### **Frontend Configuration**
+
+**API Endpoint** (`frontend/src/app/*/page.tsx`):
 ```typescript
-const response = await fetch('http://your-server-ip:8000/inpaint', {
+// Update for remote backend
+const response = await fetch('http://your-server:8000/generate', {
   method: 'POST',
   body: formData,
 })
 ```
 
-## 🔧 Troubleshooting
-
-### Backend Issues
-
-**SDXL Model Download Fails**:
-- Check internet connection and HuggingFace access
-- Ensure ~15GB free disk space
-- Verify `diffusers` library version compatibility
-
-**CUDA Out of Memory**:
-- SDXL requires 8GB+ VRAM for optimal performance
-- Close other GPU applications
-- Consider using CPU (much slower but functional)
-
-**Import Errors**:
-- Verify all dependencies: `pip install -r requirements.txt --force-reinstall`
-- Check Python version (3.8+ required)
-
-### Frontend Issues
-
-**Canvas Not Working**:
-- Ensure modern browser with HTML5 Canvas support
-- Check for JavaScript errors in browser console
-- Verify image uploads properly
-
-**CORS Errors**:
-- Backend configured for `localhost:3000`, `127.0.0.1:3000`, `0.0.0.0:3000`
-- Update CORS settings if using different ports
-
-**Mask Generation Issues**:
-- Paint with clear, solid strokes
-- Use mask preview to debug
-- Refresh page if canvas behaves unexpectedly
-
-## 🚀 Performance Optimization
-
-### SDXL Performance Tips
-
-1. **Hardware Requirements**: 
-   - GPU: 8GB+ VRAM (RTX 3070/4060 or better)
-   - CPU: Modern multi-core for CPU fallback
-   - RAM: 16GB+ system memory
-
-2. **Optimal Settings**:
-   - **Resolution**: Keep images at 1024x1024 for best quality
-   - **Steps**: 15-25 steps (SDXL sweet spot)
-   - **Guidance**: 6-10 for most use cases
-
-3. **Speed Optimizations**:
-   - Use `fp16` precision (enabled by default)
-   - Close unnecessary applications
-   - Ensure adequate cooling for sustained performance
-
-## 🔒 Security Considerations
-
-- **File Upload Validation**: Implement size limits and type checking for production
-- **Rate Limiting**: Add request throttling for public deployments  
-- **Authentication**: Consider adding user auth for production use
-- **HTTPS**: Use secure connections in production environments
-- **CORS**: Configure appropriate origins for your deployment
-
-## 🛠️ Development
-
-### Running in Development
-
-**Backend with Hot Reload**:
+**Environment Variables** (`.env.local`):
 ```bash
-cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_APP_NAME=AI Image Editor
 ```
 
-**Frontend with Hot Reload**:
+## 🔧 Troubleshooting
+
+### **Memory Issues**
+
+**CUDA Out of Memory**:
 ```bash
-cd frontend
+✅ Solution: On-demand loading system prevents this
+⚠️  If still occurs: Reduce image size or inference steps
+🔧 Emergency: Set PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+```
+
+**Model Loading Slow**:
+```bash
+✅ Expected: First request loads model (30-60 seconds)
+✅ Subsequent: Same tool requests are fast
+🔧 Optimization: Keep using same tool for batch processing
+```
+
+### **Backend Issues**
+
+**Model Download Fails**:
+```bash
+# Clear cache and retry
+rm -rf ~/.cache/huggingface/
+pip install --upgrade diffusers transformers
+python -c "from diffusers import AutoPipelineForInpainting; AutoPipelineForInpainting.from_pretrained('SG161222/RealVisXL_V5.0')"
+```
+
+**API Startup Errors**:
+```bash
+# Check dependencies
+pip install -r requirements.txt --force-reinstall
+
+# Verify Python version  
+python3 --version  # Should be 3.8+
+
+# Test imports
+python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
+```
+
+### **Frontend Issues**
+
+**Build Errors**:
+```bash
+# Clean rebuild
+rm -rf .next node_modules
+npm install
 npm run dev
 ```
 
-### Building for Production
-
-**Frontend Production Build**:
+**API Connection Issues**:
 ```bash
-cd frontend
-npm run build
-npm start
+# Check backend status
+curl http://localhost:8000/health
+
+# Verify CORS settings in main.py
+# Update API URL in frontend if needed
 ```
 
-**Backend Production**:
-- Use a production WSGI server like Gunicorn
-- Configure proper logging and monitoring
-- Set up reverse proxy (nginx) for static files
+## 🎯 Performance Optimization
 
-## 🎯 Comparison: SDXL vs SD2
+### **Hardware Recommendations**
 
-| Feature | SD2 (Previous) | SDXL (Current) |
-|---------|----------------|----------------|
-| Resolution | 512x512 | **1024x1024** |
-| Quality | Good | **Excellent** |
-| Prompt Following | Moderate | **Superior** |
-| Speed | 50+ steps | **15-25 steps** |
-| Model Size | ~5GB | ~6GB |
-| VRAM Usage | 4-6GB | **6-10GB** |
+| GPU Tier | VRAM | Performance | Recommended For |
+|-----------|------|-------------|-----------------|
+| **RTX 4090** | 24GB | Excellent | Professional use |
+| **RTX 4080** | 16GB | Very Good | Prosumer |
+| **RTX 3080** | 10GB | Good | Hobbyist |
+| **RTX 3070** | 8GB | Adequate | Basic use |
+
+### **Settings for Different Hardware**
+
+**8GB VRAM (Minimum)**:
+```python
+# Reduce batch size, enable all optimizations
+num_inference_steps=20
+enable_attention_slicing=True  
+enable_vae_slicing=True
+```
+
+**16GB+ VRAM (Recommended)**:
+```python
+# Standard settings work well
+num_inference_steps=25
+guidance_scale=7.5
+```
+
+**24GB+ VRAM (Optimal)**:
+```python
+# Can handle larger images and higher quality
+width=1152, height=1152  # Higher resolution
+num_inference_steps=30   # More detailed results
+```
+
+### **RunPod Optimization**
+
+**Recommended Instance Types**:
+- **RTX A6000** (48GB) - Best value for professional use
+- **RTX 4090** (24GB) - Excellent performance/cost ratio  
+- **RTX 3090** (24GB) - Good budget option
+
+**RunPod Setup**:
+```bash
+# In RunPod terminal
+git clone https://github.com/your-repo/APIHosted-AIImageEditor.git
+cd APIHosted-AIImageEditor/backend
+pip install -r requirements.txt
+./run.sh
+
+# Access via RunPod's exposed port
+# Update frontend to connect to: https://your-pod-id-8000.proxy.runpod.net
+```
+
+## 🔒 Production Deployment
+
+### **Security Checklist**
+
+- [ ] **Rate Limiting**: Implement request throttling
+- [ ] **Authentication**: Add user authentication system
+- [ ] **HTTPS**: Use SSL certificates for secure connections
+- [ ] **File Validation**: Restrict upload types and sizes
+- [ ] **CORS**: Configure specific allowed origins
+- [ ] **Monitoring**: Set up logging and error tracking
+
+### **Docker Deployment**
+
+**Backend Dockerfile**:
+```dockerfile
+FROM nvidia/cuda:11.8-runtime-ubuntu22.04
+RUN apt-get update && apt-get install -y python3 python3-pip
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["python3", "main.py"]
+```
+
+**Frontend Dockerfile**:
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 🆘 Support & Community
+
+### **Getting Help**
+
+- **GitHub Issues**: Report bugs and feature requests
+- **Model Issues**: Check [RealVisXL_V5.0](https://huggingface.co/SG161222/RealVisXL_V5.0) documentation
+- **Diffusers**: [Hugging Face Diffusers](https://huggingface.co/docs/diffusers) documentation
+- **FastAPI**: [FastAPI](https://fastapi.tiangolo.com/) documentation
+
+### **Contributing**
+
+We welcome contributions! Areas for improvement:
+- Additional AI models integration
+- New editing tools and features  
+- Performance optimizations
+- UI/UX enhancements
+- Documentation improvements
+
+## 📈 Changelog
+
+### **v3.0.0 - AI Image Editor Suite**
+- ✅ **Three AI Tools**: Inpainting, Object Removal, Text-to-Image
+- ✅ **RealVisXL_V5.0**: Upgraded to photorealistic SDXL model
+- ✅ **Memory Optimization**: On-demand model loading system
+- ✅ **GPU Monitoring**: Real-time memory usage tracking
+- ✅ **Multi-page UI**: Dedicated pages for each tool
+- ✅ **Enhanced Prompts**: Better default prompts and presets
+- ✅ **Aspect Ratios**: Multiple size options for text-to-image
+- ✅ **Performance**: Attention slicing and VAE optimization
+
+### **v2.0.0 - SDXL Upgrade** 
+- ✅ Stable Diffusion XL Inpainting
+- ✅ Interactive canvas-based mask creation
+- ✅ 1024x1024 high-resolution output
+- ✅ Enhanced UI with brush tools
+
+### **v1.0.0 - Initial Release**
+- ✅ Basic SD2 inpainting functionality
+- ✅ Simple file upload interface
 
 ## 📜 License
 
-This project uses the SDXL Inpainting model under the CreativeML Open RAIL++-M License. Please review the [model license](https://huggingface.co/diffusers/stable-diffusion-xl-1.0-inpainting-0.1) before commercial use.
+This project uses RealVisXL_V5.0 under the CreativeML Open RAIL++-M License. Please review the [model license](https://huggingface.co/SG161222/RealVisXL_V5.0) for commercial use guidelines.
 
-## 🆘 Support
+---
 
-For issues with:
-- **SDXL Model**: Check [HuggingFace SDXL docs](https://huggingface.co/diffusers/stable-diffusion-xl-1.0-inpainting-0.1)
-- **Diffusers Library**: Refer to [Diffusers documentation](https://huggingface.co/docs/diffusers)
-- **FastAPI**: Check [FastAPI documentation](https://fastapi.tiangolo.com/)
-- **Next.js**: Visit [Next.js documentation](https://nextjs.org/docs)
-- **Canvas Issues**: MDN [Canvas API reference](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
-
-## 🚀 Recent Updates
-
-### v2.0.0 - SDXL Upgrade
-- ✅ Upgraded to Stable Diffusion XL Inpainting
-- ✅ Interactive canvas-based mask creation
-- ✅ 1024x1024 high-resolution output  
-- ✅ Negative prompt support
-- ✅ Optimized parameters for SDXL
-- ✅ Enhanced UI with brush tools
-- ✅ Mask preview functionality
-- ✅ Improved prompt suggestions 
+**Made with ❤️ for the AI community** • **Powered by RealVisXL_V5.0** • **Optimized for professional results** 
