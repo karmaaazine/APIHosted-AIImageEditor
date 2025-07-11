@@ -9,4 +9,5 @@ diffusers==0.24.0
 transformers==4.35.2
 accelerate==0.24.1
 xformers==0.0.22
-safetensors==0.4.0 
+safetensors==0.4.0
+huggingface_hub<0.20.0 
